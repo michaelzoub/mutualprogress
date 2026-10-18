@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Sign in — Mutual Progress</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <script type="module" src="/src/dashboard.js"></script>
+  </head>
+  <body class="dash">
+    <main class="login">
+      <form class="login-card" method="post" action="/api/dashboard/login">
+        <a class="brand" href="/" aria-label="Mutual Progress home">
+          <svg class="brand-mark" viewBox="76 76 248 248" width="25" height="25" fill="none" stroke="currentColor" stroke-width="15" aria-hidden="true">
+            <circle cx="199.5" cy="199.5" r="113.5" />
+            <rect x="109.25" y="136.25" width="181" height="177" />
+          </svg>
+          <span class="brand-name">Mutual Progress</span>
+        </a>
+        <label for="password">Dashboard password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required autofocus />
+        <p class="form-error" data-login-error hidden>That password didn't match.</p>
+        <button class="button" type="submit">Sign in</button>
+      </form>
+    </main>
+  </body>
+</html>

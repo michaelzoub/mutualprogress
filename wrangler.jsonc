@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "mutual-progress",
+  "main": "./worker/index.js",
+  "compatibility_date": "2026-05-22",
+  "assets": {
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    // Writing pages are rendered by the Worker and the dashboard is gated by it, so these skip the asset fast path.
+    "run_worker_first": ["/writing", "/writing/*", "/dashboard", "/dashboard/*", "/api/*"]
+  }
+}

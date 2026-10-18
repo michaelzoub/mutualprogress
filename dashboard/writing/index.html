@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Writing dashboard — Mutual Progress</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <script type="module" src="/src/dashboard.js"></script>
+  </head>
+  <body class="dash">
+    <header class="dash-bar">
+      <div class="dash-bar-left">
+        <a class="brand" href="/" aria-label="Mutual Progress home">
+          <svg class="brand-mark" viewBox="76 76 248 248" width="25" height="25" fill="none" stroke="currentColor" stroke-width="15" aria-hidden="true">
+            <circle cx="199.5" cy="199.5" r="113.5" />
+            <rect x="109.25" y="136.25" width="181" height="177" />
+          </svg>
+          <span class="brand-name">Mutual Progress</span>
+        </a>
+        <a class="dash-crumb" href="/dashboard/writing">Writing</a>
+      </div>
+      <div class="dash-bar-right">
+        <a class="button" href="/dashboard/writing/new">New post</a>
+        <a href="/writing" target="_blank">View site</a>
+        <form method="post" action="/api/dashboard/logout"><button class="link-button" type="submit">Sign out</button></form>
+      </div>
+    </header>
+
+    <main class="dash-main" data-view="list">
+      <p class="dash-status" data-status>Loading…</p>
+      <table class="dash-table" hidden>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th class="dash-actions-col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody data-rows></tbody>
+      </table>
+    </main>
+  </body>
+</html>

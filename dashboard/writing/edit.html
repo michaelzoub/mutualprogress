@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Edit post — Mutual Progress</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <script type="module" src="/src/dashboard.js"></script>
+  </head>
+  <body class="dash">
+    <header class="dash-bar">
+      <div class="dash-bar-left">
+        <a class="brand" href="/" aria-label="Mutual Progress home">
+          <svg class="brand-mark" viewBox="76 76 248 248" width="25" height="25" fill="none" stroke="currentColor" stroke-width="15" aria-hidden="true">
+            <circle cx="199.5" cy="199.5" r="113.5" />
+            <rect x="109.25" y="136.25" width="181" height="177" />
+          </svg>
+          <span class="brand-name">Mutual Progress</span>
+        </a>
+        <a class="dash-crumb" href="/dashboard/writing">Writing</a>
+      </div>
+      <div class="dash-bar-right">
+        <span class="dash-save" data-save-status aria-live="polite"></span>
+        <button class="button button--quiet" type="button" data-action="save">Save draft</button>
+        <button class="button" type="button" data-action="publish">Publish</button>
+        <a href="/writing" target="_blank">View site</a>
+        <form method="post" action="/api/dashboard/logout"><button class="link-button" type="submit">Sign out</button></form>
+      </div>
+    </header>
+
+    <main class="editor" data-view="editor" hidden>
+      <div class="editor-doc">
+        <textarea class="editor-title" data-field="title" rows="1" placeholder="Title"></textarea>
+        <textarea class="editor-subtitle" data-field="subtitle" rows="1" placeholder="Subtitle"></textarea>
+
+        <div class="toolbar" role="toolbar" aria-label="Formatting">
+          <button type="button" data-cmd="bold" aria-label="Bold"><b>B</b></button>
+          <button type="button" data-cmd="italic" aria-label="Italic"><i>I</i></button>
+          <button type="button" data-cmd="strike" aria-label="Strikethrough"><s>S</s></button>
+          <span class="toolbar-sep"></span>
+          <button type="button" data-cmd="h2" aria-label="Heading">H2</button>
+          <button type="button" data-cmd="h3" aria-label="Subheading">H3</button>
+          <button type="button" data-cmd="quote" aria-label="Quote">“”</button>
+          <span class="toolbar-sep"></span>
+          <button type="button" data-cmd="bullets" aria-label="Bulleted list">•</button>
+          <button type="button" data-cmd="numbers" aria-label="Numbered list">1.</button>
+          <button type="button" data-cmd="code" aria-label="Code block">{ }</button>
+          <span class="toolbar-sep"></span>
+          <button type="button" data-cmd="link" aria-label="Link">Link</button>
+          <button type="button" data-cmd="image" aria-label="Image">Image</button>
+          <button type="button" data-cmd="rule" aria-label="Divider">—</button>
+        </div>
+
+        <div class="editor-body article-body" data-editor></div>
+      </div>
+
+      <aside class="editor-side" aria-label="Post settings">
+        <p class="editor-state" data-state></p>
+
+        <label for="slug">Slug</label>
+        <div class="slug-field">
+          <span>/writing/</span>
+          <input id="slug" data-field="slug" spellcheck="false" />
+        </div>
+
+        <label for="written-by">Written by</label>
+        <input id="written-by" data-field="writtenBy" />
+
+        <label for="cover">Cover image URL</label>
+        <input id="cover" data-field="coverImageUrl" type="url" placeholder="https://" />
+
+        <p class="editor-words" data-words></p>
+
+        <div class="editor-links">
+          <button class="link-button" type="button" data-copy-share hidden>Copy share link</button>
+          <a data-link="preview" target="_blank" hidden>Open share link</a>
+          <a data-link="live" target="_blank" hidden>View live post</a>
+          <button class="link-button" type="button" data-action="unpublish" hidden>Unpublish</button>
+          <button class="link-button link-button--danger" type="button" data-action="delete" hidden>Delete post</button>
+        </div>
+
+        <p class="form-error" data-error hidden></p>
+      </aside>
+    </main>
+  </body>
+</html>
