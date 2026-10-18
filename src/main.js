@@ -3,6 +3,7 @@ import '@fontsource-variable/source-serif-4';
 import './styles.css';
 import './theme.js';
 import { createWarp } from './warp.js';
+import { createDetail } from './detail.js';
 
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
@@ -155,8 +156,13 @@ function createAutoplay() {
     hold('offscreen', !entry.isIntersecting);
   }).observe(track);
 
-  return { reset };
+  return { reset, hold };
 }
+
+/* Detail dialog */
+
+// The carousel holds still while a topic is open.
+createDetail({ cards, motion, onToggle: (open) => autoplay?.hold('dialog', open) });
 
 track.addEventListener('scroll', update, { passive: true });
 window.addEventListener('resize', update);
