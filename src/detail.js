@@ -6,43 +6,37 @@ import { gsap } from 'gsap';
 const topics = {
   'ai-for-humans': {
     copy: [
-      'The most capable AI systems are being built by a handful of organizations, tuned to their incentives and governed by their terms. We study what it would take for intelligence to work on behalf of the person using it: models people can run, inspect, and direct, with interests that stay aligned with theirs.',
-      'We back teams building assistants that keep data local, interfaces that make a model’s reasoning legible, and the evaluation work that tells us whether a system actually serves its user.',
+      'We think AI should feel like a tool you own, not a service you rent. We’re excited about models that run on your own hardware, remember what matters to you, and work for you instead of whoever’s hosting them.',
     ],
     points: ['Personal and local models', 'Interpretability', 'User-aligned agents'],
   },
   'decentralized-training': {
     copy: [
-      'Training a frontier model today takes a single data center and the capital to fill it. That bottleneck decides who gets to build the most powerful systems. We research methods that let training run across many independent machines: low-communication optimizers, verifiable compute, and incentive schemes that hold a network together.',
-      'If those methods work at scale, the ability to train frontier models stops depending on one company’s balance sheet.',
+      'Right now, training a frontier model takes one giant data center and a lot of money. We’re fascinated by the idea of pooling compute from all over the world instead, and we think whoever cracks it changes who gets to build AI.',
     ],
     points: ['Distributed optimization', 'Verifiable compute', 'Open compute networks'],
   },
   'self-sovereignty': {
     copy: [
-      'Money, speech, and identity increasingly pass through intermediaries that can freeze, censor, or revoke them. We look at the tools that return that control to individuals: self-custodied money, communication that can’t be quietly switched off, and credentials that belong to the person they describe.',
-      'Our focus is on making those tools usable enough for everyone, not just the technically fluent.',
+      'We care a lot about people being in control of their own money, speech, and identity. Crypto was the first big step, and we’re excited about the tools that make that kind of ownership easy enough for everyone to use.',
     ],
     points: ['Self-custody', 'Censorship resistance', 'Portable identity'],
   },
   'new-computing-paradigms': {
     copy: [
-      'Most of computing still follows the architecture laid out in the 1940s, and the limits of shrinking silicon are getting closer. We follow the alternatives seriously: analog and optical processors, neuromorphic hardware, reversible logic, and computers that live closer to the body and the world.',
-      'We want to understand which of these can become practical, and what new kinds of software and interfaces each would make possible.',
+      'Computers have looked basically the same since the 1940s, and we don’t think that lasts forever. We love following the weird stuff, like optical chips, neuromorphic hardware, and devices that blend into the world around you, and we think one of them will be the next big platform.',
     ],
     points: ['Novel hardware', 'Ambient interfaces', 'Post–von Neumann architectures'],
   },
   'human-augmentation': {
     copy: [
-      'Technology can replace people or extend them. We focus on the second path: tools that sharpen perception, memory, movement, and judgment, so that people become more capable alongside the machines they use.',
-      'That spans spatial computing and wearables, brain–computer interfaces, and assistive robotics, each judged by how much more a person can do with it.',
+      'We’re most excited by technology that makes people better at things, not technology that makes them unnecessary. Headsets, wearables, brain-computer interfaces, and robotic hands all fall into that bucket for us, and we think the next decade is going to be wild.',
     ],
     points: ['Spatial computing', 'Neural interfaces', 'Assistive robotics'],
   },
   'space-exploration': {
     copy: [
-      'Getting to orbit has never been cheaper, but living beyond Earth is still far from practical. We study the hard problems in between: life support that closes the loop, manufacturing from local materials, propulsion, and the institutions that settlements will need to govern themselves.',
-      'Much of what works in space also makes life on Earth more resilient, which is part of why we care about it.',
+      'We’re infatuated with everything related to the cosmos, and believe that commercial space exploration is one of the next unlocks in the tech tree. Launch costs keep dropping, and we want to help figure out what it takes to actually live and build out there.',
     ],
     points: ['Closed-loop habitats', 'In-situ resources', 'Propulsion'],
   },
