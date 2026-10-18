@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Writing — Mutual Progress</title>
-    <meta name="description" content="Essays and research notes from Mutual Progress on AI for humans, decentralized training, freedom tech, new computing paradigms, and space exploration." />
+    <meta name="description" content="Writing from Mutual Progress." />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <script>
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
@@ -30,15 +30,8 @@
     </header>
 
     <main>
-      <section class="writing" aria-labelledby="writing-title">
-        <div class="writing-head">
-          <h1 id="writing-title">Writing</h1>
-          <p>Essays and research notes from the work.</p>
-        </div>
-
-        <!-- Filled by the Worker from D1 -->
-        <ul class="post-list" data-slot="posts"></ul>
-      </section>
+      <!-- Filled by server/app.js from Supabase -->
+      <article class="article" data-slot="article"></article>
     </main>
 
     <footer class="site-footer">

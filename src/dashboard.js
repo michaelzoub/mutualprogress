@@ -42,7 +42,7 @@ async function copyShareLink(post, button) {
 }
 
 function formatDate(iso) {
-  // UTC, to match the dates the Worker renders on the public pages.
+  // UTC, to match the dates the server renders on the public pages.
   return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
 }
 

@@ -1,37 +1,39 @@
+import { timingSafeEqual } from 'node:crypto';
+
 const SESSION_COOKIE = 'mp_session';
 const SESSION_DAYS = 30;
 const LIST_COLUMNS = 'id,slug,title,subtitle,preview_token,published_at,created_at,updated_at';
 
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
-    const path = url.pathname.replace(/\/+$/, '') || '/';
+/*
+ * Handles /writing, /dashboard and /api. Static files are served by Vercel (or Vite in dev);
+ * `template(name)` returns the built HTML for templates/<name>.html.
+ */
+export async function handle(request, { env, template }) {
+  const path = new URL(request.url).pathname.replace(/\/+$/, '') || '/';
 
-    try {
-      if (path.startsWith('/api/')) return await api(request, env, path);
-      if (path === '/writing' || path.startsWith('/writing/')) return await writing(request, env, path);
-      if (path === '/dashboard' || path.startsWith('/dashboard/')) return await dashboard(request, env, path);
-    } catch (error) {
-      console.error(error);
-      const message = error.notConfigured
-        ? 'Supabase is not configured. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env (or as Worker secrets).'
-        : error.missingTable
-          ? 'The posts table is missing. Run supabase/schema.sql in the Supabase SQL editor.'
-          : 'Something went wrong.';
-      return path.startsWith('/api/') ? json({ error: message }, 500) : new Response(message, { status: 500 });
-    }
+  try {
+    if (path.startsWith('/api/')) return await api(request, env, path);
+    if (path === '/writing' || path.startsWith('/writing/')) return await writing(env, template, path);
+    if (path === '/dashboard' || path.startsWith('/dashboard/')) return await dashboard(request, env, template, path);
+  } catch (error) {
+    console.error(error);
+    const message = error.notConfigured
+      ? 'Supabase is not configured. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env (or in the Vercel project settings).'
+      : error.missingTable
+        ? 'The posts table is missing. Run supabase/schema.sql in the Supabase SQL editor.'
+        : 'Something went wrong.';
+    return path.startsWith('/api/') ? json({ error: message }, 500) : new Response(message, { status: 500 });
+  }
 
-    return env.ASSETS.fetch(request);
-  },
-};
+  return new Response('Not found', { status: 404 });
+}
 
 /* Public writing pages, rendered into the static templates so posts ship in the HTML. */
 
-async function writing(request, env, path) {
+async function writing(env, template, path) {
   if (path === '/writing') {
     const posts = await db(env, 'posts?select=*&published_at=not.is.null&order=published_at.desc');
-    const page = await template(request, env, '/writing/');
-    return new HTMLRewriter().on('[data-slot="posts"]', html(renderPostList(posts))).transform(page);
+    return page(fillSlot(await template('writing'), 'posts', renderPostList(posts)));
   }
 
   const preview = path.match(/^\/writing\/preview\/([a-f0-9]{48})$/);
@@ -40,22 +42,20 @@ async function writing(request, env, path) {
     : `slug=eq.${encodeURIComponent(path.slice('/writing/'.length))}&published_at=not.is.null`;
   const [post] = await db(env, `posts?select=*&${filter}&limit=1`);
 
-  const page = await template(request, env, '/writing/post');
-  const rewriter = new HTMLRewriter();
+  let body = await template('post');
 
   if (!post) {
-    rewriter.on('title', text('Not found — Mutual Progress')).on('[data-slot="article"]', html(renderMissing()));
-    return withStatus(rewriter.transform(page), 404);
+    body = setTitle(body, 'Not found — Mutual Progress');
+    return page(fillSlot(body, 'article', renderMissing()), { status: 404 });
   }
 
   const description = post.subtitle || `${post.title}, from Mutual Progress.`;
-  rewriter
-    .on('title', text(`${post.title || 'Untitled'} — Mutual Progress`))
-    .on('meta[name="description"]', attr('content', description))
-    .on('[data-slot="article"]', html(renderArticle(post, preview ? 'Unlisted preview' : null)));
-  if (!preview) return rewriter.transform(page);
-  rewriter.on('head', append('<meta name="robots" content="noindex" />'));
-  return withHeaders(rewriter.transform(page), { 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex' });
+  body = setTitle(body, `${post.title || 'Untitled'} — Mutual Progress`);
+  body = body.replace(/(<meta name="description" content=")[^"]*/, (_, open) => open + esc(description));
+  body = fillSlot(body, 'article', renderArticle(post, preview ? 'Unlisted preview' : null));
+  if (!preview) return page(body);
+  body = body.replace('</head>', '<meta name="robots" content="noindex" />\n  </head>');
+  return page(body, { headers: { 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex' } });
 }
 
 function renderPostList(posts) {
@@ -108,21 +108,19 @@ function renderMissing() {
 
 /* Dashboard pages: static shells behind the session cookie. */
 
-async function dashboard(request, env, path) {
+async function dashboard(request, env, template, path) {
   const authed = await hasSession(request, env);
   const headers = { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' };
 
   if (path === '/dashboard/login') {
     if (authed) return redirect('/dashboard/writing');
-    return withHeaders(await template(request, env, '/dashboard/login'), headers);
+    return page(await template('login'), { headers });
   }
   if (!authed) return redirect('/dashboard/login');
   if (path === '/dashboard') return redirect('/dashboard/writing');
-  if (path === '/dashboard/writing') {
-    return withHeaders(await template(request, env, '/dashboard/writing/'), headers);
-  }
+  if (path === '/dashboard/writing') return page(await template('dashboard'), { headers });
   if (/^\/dashboard\/writing\/(new|[0-9a-f-]{36})$/.test(path)) {
-    return withHeaders(await template(request, env, '/dashboard/writing/edit'), headers);
+    return page(await template('editor'), { headers });
   }
   return new Response('Not found', { status: 404, headers });
 }
@@ -257,9 +255,9 @@ async function sign(env, value) {
 }
 
 function safeEqual(a, b) {
-  const x = new TextEncoder().encode(a);
-  const y = new TextEncoder().encode(b);
-  return x.byteLength === y.byteLength && crypto.subtle.timingSafeEqual(x, y);
+  const x = Buffer.from(a);
+  const y = Buffer.from(b);
+  return x.byteLength === y.byteLength && timingSafeEqual(x, y);
 }
 
 function cookie(request, value, maxAge) {
@@ -268,7 +266,7 @@ function cookie(request, value, maxAge) {
   return `${SESSION_COOKIE}=${value}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Strict${secure}`;
 }
 
-/* Supabase, over PostgREST with the service-role key. The key never leaves the Worker. */
+/* Supabase, over PostgREST with the service-role key. The key never leaves the server. */
 
 async function db(env, query, { method = 'GET', body } = {}) {
   if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_URL.includes('your-project')) {
@@ -295,12 +293,6 @@ async function db(env, query, { method = 'GET', body } = {}) {
 
 /* Helpers */
 
-async function template(request, env, path) {
-  const response = await env.ASSETS.fetch(new Request(new URL(path, request.url)));
-  if (!response.ok) throw new Error(`Template ${path} returned ${response.status}`);
-  return response;
-}
-
 function slugify(value) {
   return value
     .toLowerCase()
@@ -323,10 +315,18 @@ function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }
 
-const html = (content) => ({ element: (el) => el.setInnerContent(content, { html: true }) });
-const text = (content) => ({ element: (el) => el.setInnerContent(content) });
-const attr = (name, value) => ({ element: (el) => el.setAttribute(name, value) });
-const append = (content) => ({ element: (el) => el.append(content, { html: true }) });
+// Templates mark their slots with an empty element: <ul data-slot="posts"></ul>.
+function fillSlot(html, name, content) {
+  return html.replace(new RegExp(`(<[^>]*data-slot="${name}"[^>]*>)(</)`), (_, open, close) => open + content + close);
+}
+
+function setTitle(html, title) {
+  return html.replace(/<title>[^<]*<\/title>/, () => `<title>${esc(title)}</title>`);
+}
+
+function page(html, { status = 200, headers = {} } = {}) {
+  return new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8', ...headers } });
+}
 
 function json(data, status = 200) {
   return Response.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
@@ -336,12 +336,3 @@ function redirect(location, headers = {}) {
   return new Response(null, { status: 303, headers: { Location: location, ...headers } });
 }
 
-function withStatus(response, status) {
-  return new Response(response.body, { status, headers: response.headers });
-}
-
-function withHeaders(response, headers) {
-  const next = new Response(response.body, response);
-  for (const [key, value] of Object.entries(headers)) next.headers.set(key, value);
-  return next;
-}
