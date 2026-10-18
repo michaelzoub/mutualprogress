@@ -6,7 +6,6 @@
   --control: #ebe8e5;
   --control-hover: #e2dfdb;
   --disabled: #a9a7a5;
-  --faint: #8e8d8b;
   --header-wash: rgb(251 250 249 / 0.6);
   /* The topic glyphs are inverted against the photo, so they need a light source in either theme. */
   --mark: #fbfaf9;
@@ -17,6 +16,8 @@
   --ease: cubic-bezier(0.6, 0.2, 0, 1);
   --gutter: 40px;
   --header-h: 68px;
+  /* Vertical space on the home page that isn't card image: header, title, card text, and a margin below. */
+  --chrome: 360px;
   --sans: "Inter Variable", "Helvetica Neue", Arial, sans-serif;
   --serif: "Source Serif 4 Variable", Georgia, serif;
   color-scheme: light;
@@ -30,7 +31,6 @@
   --control: #262524;
   --control-hover: #31302e;
   --disabled: #585755;
-  --faint: #6f6e6c;
   --header-wash: rgb(18 18 17 / 0.6);
   color-scheme: dark;
 }
@@ -53,6 +53,12 @@ html {
 
 body {
   margin: 0;
+}
+
+/* The home page is one screen tall and never scrolls vertically; the carousel only moves sideways. */
+.home {
+  height: 100svh;
+  overflow: hidden;
 }
 
 a {
@@ -153,8 +159,7 @@ a {
   position: relative;
   /* The autoplay kicks the whole track sideways; clip it so the page never gains a horizontal scroll. */
   overflow-x: clip;
-  min-height: calc(100svh - var(--header-h));
-  padding-bottom: 72px;
+  height: calc(100svh - var(--header-h));
 }
 
 /* Glowing particles and light streaks laid over the carousel (see warp.js). */
@@ -243,7 +248,9 @@ a {
 
 .card {
   --arrow: 1;
-  flex: 0 0 25%;
+  --share: 25%;
+  /* Narrow the cards on short screens so the tallest one, text and all, still fits above the fold. */
+  flex: 0 0 min(var(--share), (100svh - var(--chrome)) / 1.04);
   min-width: 0;
   scroll-snap-align: start;
   container-type: inline-size;
@@ -254,7 +261,7 @@ a {
 }
 
 /* Hidden until GSAP takes over; the delayed animation is a failsafe if the script never runs. */
-.motion :is(.site-header, main, .site-footer) {
+.motion :is(.site-header, main) {
   visibility: hidden;
   animation: failsafe 0s 3s forwards;
 }
@@ -475,25 +482,11 @@ a {
   text-wrap: pretty;
 }
 
-/* Footer */
-
-.site-footer {
-  padding: 28px var(--gutter) 36px;
-  color: var(--faint);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.site-footer a {
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
 /* Responsive */
 
 @media (max-width: 1180px) {
   .card {
-    flex-basis: calc(100% / 3);
+    --share: calc(100% / 3);
   }
 }
 
@@ -503,13 +496,14 @@ a {
   }
 
   .card {
-    flex-basis: 48%;
+    --share: 48%;
   }
 }
 
 @media (max-width: 600px) {
   :root {
     --gutter: 20px;
+    --chrome: 330px;
   }
 
   .brand-name {
@@ -545,7 +539,7 @@ a {
   }
 
   .card {
-    flex-basis: 82%;
+    --share: 82%;
   }
 }
 

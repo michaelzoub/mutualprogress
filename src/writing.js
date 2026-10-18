@@ -22,9 +22,9 @@ async function intro() {
     .from('.writing-head, .article-head', { ...fade, x: -140 }, 0.3)
     .from('.post, .post-empty, .article-cover, .article-body', { ...fade, y: 96, stagger: 0.08 }, 0.4)
     .from('.site-header > *', { y: -96 }, 0.8)
-    .from(['.article-byline', '.article-back', '.site-footer'], { ...fade }, 0.8);
+    .from(['.article-byline', '.article-back'], { ...fade }, 0.8);
 
-  gsap.set(['.site-header', 'main', '.site-footer'], { visibility: 'visible' });
+  gsap.set(['.site-header', 'main'], { visibility: 'visible' });
 }
 
 if (document.documentElement.classList.contains('motion')) intro();
