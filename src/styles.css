@@ -157,6 +157,8 @@ a {
 
 .focus {
   position: relative;
+  display: flex;
+  flex-direction: column;
   /* The autoplay kicks the whole track sideways; clip it so the page never gains a horizontal scroll. */
   overflow-x: clip;
   height: calc(100svh - var(--header-h));
@@ -229,9 +231,22 @@ a {
 
 /* Track */
 
+/* A grid rather than a row of flex items so every card shares two rows through subgrid: one image row, one text row.
+   The text row takes the tallest card's text; the image row takes the rest of the screen, up to --media-max. */
 .track {
-  display: flex;
-  align-items: flex-start;
+  --share: 0.25;
+  /* Narrow the cards on short screens so the tallest original card, text and all, still fits above the fold. */
+  --card-w: min((100vw - var(--gutter) * 2) * var(--share), (100svh - var(--chrome)) / 1.04);
+  /* Images take about 60% of the screen height, so the text below ends near the bottom edge. The caps stop the crops
+     from zooming too far: a fixed ceiling for tall screens, and one relative to card width for narrow cards. */
+  --media-max: min(60svh, 640px, var(--card-w) * 1.45);
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--card-w);
+  grid-template-rows: minmax(0, var(--media-max)) auto;
+  align-content: start;
   margin: 40px 0 0;
   padding: 0 var(--gutter);
   list-style: none;
@@ -248,16 +263,17 @@ a {
 
 .card {
   --arrow: 1;
-  --share: 25%;
-  /* Narrow the cards on short screens so the tallest one, text and all, still fits above the fold. */
-  flex: 0 0 min(var(--share), (100svh - var(--chrome)) / 1.04);
+  display: grid;
+  grid-row: 1 / -1;
+  grid-template-rows: subgrid;
   min-width: 0;
   scroll-snap-align: start;
-  container-type: inline-size;
 }
 
 .card-link {
-  display: block;
+  display: grid;
+  grid-row: 1 / -1;
+  grid-template-rows: subgrid;
 }
 
 /* Hidden until GSAP takes over; the delayed animation is a failsafe if the script never runs. */
@@ -276,13 +292,15 @@ a {
   outline-offset: -2px;
 }
 
-/* Every measurement below is a share of the card width, so the composition holds at any size. */
+/* Every card's image is the height of the shared image row. Measurements below are shares of the card's width or of
+   that height, so each collage keeps its composition at any size. */
 /* Held just under full strength so the collage sits into the paper; the opacity also isolates the blends below. */
+/* The media is the size container rather than the card: containment would stop the card from being a subgrid. */
 .card-media {
   position: relative;
   overflow: hidden;
-  height: var(--h);
   opacity: 0.92;
+  container-type: size;
 }
 
 .photo {
@@ -325,48 +343,31 @@ a {
   font-weight: 500;
 }
 
-/* A: two photos side by side across the lower half */
-.card--a {
-  --h: 84.6cqw;
-}
+/* Heights and top offsets were set in card widths against each card's own height; they're now shares of the shared height. */
 
+/* A: photo with a tile across the lower right */
 .card--a .photo--tile {
-  top: 42.7cqw;
+  top: 50.5%;
   left: 55%;
   width: 45%;
-  height: calc(100% - 42.7cqw);
+  height: 49.5%;
 }
 
-
-/* C: tallest card, inset tile across the middle */
-.card--c {
-  --h: 104cqw;
-}
-
-
+/* C: inset tile across the middle */
 .card--c .photo--tile {
-  top: 60cqw;
-  left: 14cqw;
-  width: 69.8cqw;
-  height: 19.2cqw;
+  top: 57.7%;
+  left: 14%;
+  width: 69.8%;
+  height: 18.5%;
 }
 
 /* B: photo with a narrow strip on the upper left */
-.card--b {
-  --h: 98.7cqw;
-}
-
 .card--b .photo--strip {
-  width: 22cqw;
-  height: 52.2cqw;
+  width: 22%;
+  height: 52.9%;
 }
 
-
-/* D: shortest card, two photos side by side */
-.card--d {
-  --h: 73.4cqw;
-}
-
+/* D: two photos side by side */
 .card--d .photo--left {
   width: 50%;
 }
@@ -376,46 +377,36 @@ a {
   width: 50%;
 }
 
-
 /* E: tall photo with a tile on the upper right */
-.card--e {
-  --h: 98.3cqw;
-}
-
 .card--e .photo--tile {
   left: 58%;
   width: 42%;
-  height: 63.8cqw;
+  height: 64.9%;
 }
-
 
 /* F: wide photo with a tile set into the lower left */
-.card--f {
-  --h: 80cqw;
-}
-
 .card--f .photo--tile {
-  top: 40cqw;
+  top: 50%;
   width: 42%;
-  height: calc(100% - 40cqw);
+  height: 50%;
 }
 
 /* Tints start on a photo seam but only cover part of a photo, so every image keeps a clear, true-color patch. */
-.card--a .tint--1 { top: 0; left: 55%; width: 45%; height: 24cqw; background: var(--sky); }
-.card--a .tint--2 { top: 42.7cqw; left: 20%; width: 35%; height: 22cqw; background: var(--sand); }
+.card--a .tint--1 { top: 0; left: 55%; width: 45%; height: 28.4%; background: var(--sky); }
+.card--a .tint--2 { top: 50.5%; left: 20%; width: 35%; height: 26%; background: var(--sand); }
 
-.card--c .tint--1 { top: 60cqw; left: 14cqw; width: 34.9cqw; height: 19.2cqw; background: var(--coral); }
-.card--c .tint--2 { top: 79.2cqw; left: 0; width: 30%; bottom: 0; background: var(--sky); }
+.card--c .tint--1 { top: 57.7%; left: 14%; width: 34.9%; height: 18.5%; background: var(--coral); }
+.card--c .tint--2 { top: 76.2%; left: 0; width: 30%; bottom: 0; background: var(--sky); }
 
-.card--b .tint--1 { top: 52.2cqw; left: 50%; right: 0; height: 26cqw; background: var(--sky); }
+.card--b .tint--1 { top: 52.9%; left: 50%; right: 0; height: 26.3%; background: var(--sky); }
 
-.card--d .tint--1 { top: 0; left: 50%; width: 28%; height: 40cqw; background: var(--coral); }
+.card--d .tint--1 { top: 0; left: 50%; width: 28%; height: 54.5%; background: var(--coral); }
 
-.card--e .tint--1 { top: 30cqw; left: 58%; width: 42%; height: 33.8cqw; background: var(--sky); }
-.card--e .tint--2 { top: 63.8cqw; left: 0; width: 30%; bottom: 0; background: var(--coral); }
+.card--e .tint--1 { top: 30.5%; left: 58%; width: 42%; height: 34.4%; background: var(--sky); }
+.card--e .tint--2 { top: 64.9%; left: 0; width: 30%; bottom: 0; background: var(--coral); }
 
-.card--f .tint--1 { top: 0; left: 70%; width: 30%; height: 40cqw; background: var(--sand); }
-.card--f .tint--2 { top: 58cqw; left: 0; width: 42%; bottom: 0; background: var(--coral); }
+.card--f .tint--1 { top: 0; left: 70%; width: 30%; height: 50%; background: var(--sand); }
+.card--f .tint--2 { top: 72.5%; left: 0; width: 42%; bottom: 0; background: var(--coral); }
 
 /* Card text */
 
@@ -467,16 +458,22 @@ a {
 
 .card-text h2 {
   margin: 0;
-  font-size: clamp(20px, 7.06cqw, 24px);
+  font-size: clamp(20px, var(--card-w) * 0.0706, 24px);
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
 
+/* The arrow sits beside the title, so the question can run under it; the copy is written to fit two lines. */
 .card-text p {
-  margin: 4px 0 0;
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 4px -48px 0 0;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   color: var(--muted);
-  font-size: clamp(13.5px, 4.41cqw, 15px);
+  font-size: clamp(13.5px, var(--card-w) * 0.0441, 15px);
   line-height: 1.2;
   letter-spacing: -0.02em;
   text-wrap: pretty;
@@ -485,8 +482,8 @@ a {
 /* Responsive */
 
 @media (max-width: 1180px) {
-  .card {
-    --share: calc(100% / 3);
+  .track {
+    --share: calc(1 / 3);
   }
 }
 
@@ -495,8 +492,8 @@ a {
     display: none;
   }
 
-  .card {
-    --share: 48%;
+  .track {
+    --share: 0.48;
   }
 }
 
@@ -538,8 +535,8 @@ a {
     margin-top: 28px;
   }
 
-  .card {
-    --share: 82%;
+  .track {
+    --share: 0.82;
   }
 }
 
