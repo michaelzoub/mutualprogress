@@ -6,7 +6,7 @@
     <title>Mutual Progress</title>
     <meta
       name="description"
-      content="Mutual Progress researches and invests in AI for humans, decentralized training, freedom tech, new computing paradigms, tech that elevates humans, and space exploration."
+      content="Mutual Progress researches and invests in AI for humans, decentralized training, self-sovereignty, new computing paradigms, human augmentation, and space exploration."
     />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <script>
@@ -21,12 +21,12 @@
       /* Paints before the stylesheet (loaded through main.js) arrives, so the first frame is just the page color. */
       html { background: #fbfaf9; }
       html[data-theme="dark"] { background: #121211; }
-      .motion :is(.site-header, main, .site-footer) { visibility: hidden; animation: failsafe 0s 3s forwards; }
+      .motion :is(.site-header, main) { visibility: hidden; animation: failsafe 0s 3s forwards; }
       @keyframes failsafe { to { visibility: visible; } }
     </style>
     <script type="module" src="/src/main.js"></script>
   </head>
-  <body>
+  <body class="home">
     <header class="site-header">
       <a class="brand" href="/" aria-label="Mutual Progress home">
         <svg class="brand-mark" viewBox="76 76 248 248" width="25" height="25" fill="none" stroke="currentColor" stroke-width="15" aria-hidden="true">
@@ -101,7 +101,7 @@
 
           <!-- Photo with a narrow strip on the upper left -->
           <li class="card card--b">
-            <a class="card-link" href="#freedom-tech">
+            <a class="card-link" href="#self-sovereignty">
               <div class="card-media">
                 <span class="mark" aria-hidden="true">₿</span>
                 <img class="photo photo--base" src="/images/jetpack-flight.webp" alt="" style="--x: 0%; --y: 50%" />
@@ -109,7 +109,7 @@
                 <span class="tint tint--1"></span>
               </div>
               <div class="card-text">
-                <h2>Freedom tech</h2>
+                <h2>Self-sovereignty</h2>
                 <p>Which tools keep money, speech, and identity in individual hands?</p>
                 <span class="card-arrow" aria-hidden="true"></span>
               </div>
@@ -135,7 +135,7 @@
 
           <!-- Tall photo with a tile on the upper right -->
           <li class="card card--e">
-            <a class="card-link" href="#tech-that-elevates-humans">
+            <a class="card-link" href="#human-augmentation">
               <div class="card-media">
                 <span class="mark" aria-hidden="true">↑</span>
                 <img class="photo photo--base" src="/images/vision-headset.webp" alt="" style="--x: 30%; --y: 30%" />
@@ -144,7 +144,7 @@
                 <span class="tint tint--2"></span>
               </div>
               <div class="card-text">
-                <h2>Tech that elevates humans</h2>
+                <h2>Human augmentation</h2>
                 <p>Which tools make people more capable rather than less needed?</p>
                 <span class="card-arrow" aria-hidden="true"></span>
               </div>
@@ -171,12 +171,5 @@
         </ul>
       </section>
     </main>
-
-    <footer class="site-footer">
-      <p>
-        Truffle imagery from
-        <a href="https://truffle.net/">truffle.net</a>.
-      </p>
-    </footer>
   </body>
 </html>

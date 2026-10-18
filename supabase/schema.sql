@@ -15,5 +15,5 @@ create table if not exists public.posts (
 
 create index if not exists posts_published_at on public.posts (published_at desc);
 
--- No policies: only the Worker's service-role key can read or write, so drafts never leak through the anon key.
+-- No policies: only the server's service-role key can read or write, so drafts never leak through the anon key.
 alter table public.posts enable row level security;

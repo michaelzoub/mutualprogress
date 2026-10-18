@@ -176,10 +176,9 @@ async function intro() {
     .from(cards, { ...fade, y: 96 }, 0.3)
     .from('#focus-title', { ...fade, x: -140 }, 0.6)
     .from('.focus-controls', { ...fade, y: 30 }, 0.6)
-    .from('.site-header > *', { y: -96 }, 0.8)
-    .from('.site-footer', { ...fade }, 0.8);
+    .from('.site-header > *', { y: -96 }, 0.8);
 
-  gsap.set(['.site-header', 'main', '.site-footer'], { visibility: 'visible' });
+  gsap.set(['.site-header', 'main'], { visibility: 'visible' });
 }
 
 if (motion) intro();
